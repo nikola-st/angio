@@ -110,7 +110,7 @@ class MojiPreglediTable extends Component
                     }
                 }
             }
-
+            
             // Logo i pečat sa CSS skaliranjem
             $logoPath = public_path('assets/img/logo12pdf.png');
             $pecatPath = public_path('assets/img/pecatpdf.png');
@@ -122,7 +122,7 @@ class MojiPreglediTable extends Component
             $html .= '</div>';
             $html .= '<div>' . $htmlContent . '</div>';
             if (file_exists($pecatPath)) {
-                $html .= '<div style="text-align:right;margin-top:50px;"><img src="' . $pecatPath . '" style="width:150px;height:auto;"></div>';
+                $html .= '<div style="text-align:right;margin-top:50px;"><img src="' . $pecatPath . '" style="width:200px;height:auto;"></div>';
             }
 
             $options = new Options();
