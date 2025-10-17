@@ -55,11 +55,11 @@
         @if (Route::has('login'))
             <div class="hidden fixed top-0 right-0 px-6 py-4 sm:block">
                 @auth
-                    @if(auth()->user()->role === 'doctor')
+                    @if(auth()->user()->isDoctor())
                         <a href="{{ route('doktor') }}" class="text-sm text-gray-700 dark:text-gray-500 underline">
                             RAD SA PACIJENTIMA
                         </a>
-                    @elseif(auth()->user()->role === 'patient')
+                    @elseif(auth()->user()->isPatient())
                         <a href="{{ route('moji-pregledi') }}" class="text-sm text-gray-700 dark:text-gray-500 underline">
                             MOJI PREGLEDI
                         </a>
@@ -72,7 +72,7 @@
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                         @csrf
                     </form>
-                    @else
+                @else
                     <a href="{{ route('login') }}" class="text-sm text-gray-700 dark:text-gray-500 underline">
                         Ulogujte se
                     </a>

@@ -55,16 +55,15 @@
         @if (Route::has('login'))
                 <div class="hidden fixed top-0 right-0 px-6 py-4 sm:block">
                     @auth
-                    @if(auth()->user()->role === 'doctor')
+                    @if(auth()->user()->isDoctor())
                         <a href="{{ route('doktor') }}" class="text-sm text-gray-700 dark:text-gray-500 underline">
                             РАД СА ПАЦИЈЕНТИМА
                         </a>
-                    @elseif(auth()->user()->role === 'patient')
+                    @elseif(auth()->user()->isPatient())
                         <a href="{{ route('moji-pregledi') }}" class="text-sm text-gray-700 dark:text-gray-500 underline">
                             МОЈИ ПРЕГЛЕДИ
                         </a>
                     @endif
-
                     <!-- Logout -->
                     <a href="{{ route('logout') }}"class="text-sm text-gray-700 dark:text-gray-500 underline ml-4"onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                         Излогујте се

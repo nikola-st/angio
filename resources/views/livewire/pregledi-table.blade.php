@@ -123,96 +123,97 @@
 </div>
 
 @push('scripts')
-<script>
-function initTinyMCE() {
-    if (typeof tinymce === 'undefined') return;
+    <script>
+    function initTinyMCE() {
+        if (typeof tinymce === 'undefined') return;
 
-    if (tinymce.editors.length > 0) {
-        tinymce.remove();
+        if (tinymce.editors.length > 0) {
+                tinymce.remove();
+        }
+
+        tinymce.init({
+            selector: '#nalaz',
+            plugins: ['print', 'autosave', 'textpattern'],
+            menubar: false,
+            toolbar: ['undo redo | styles | bold italic | print | restoredraft | alignleft aligncenter alignright alignjustify'],
+            textpattern_patterns: [
+                { start: 'subkl', replacement: 'Subklavijalne, aksilarne, brahijalne, radijalne i ulnarne arterije i vene su bez promena.' },
+                { start: 'ilijačne', replacement: 'Obostrano ilijačne, femoralne, poplitealne, zadnje i prednje tibijalne i peronealne vene su spontanog, fazičnog protoka, bez tromba i valvularne insuficijencije. Vv.mm.solei i gastrocnemii su bez promena.' },
+                { start: 'v.cava', replacement: 'V.cava inferior je spontanog, fazičnog protoka, bez tromba.' },
+                { start: 'karotidne', replacement: 'Obostrano karotidne arterije su odgovarajućih hemodinamskih i morfoloških osobina, bez patoloških promena. Vertebralne arterije su odgovarajućih promera, fiziološkog smera, suficijentnih brzina, bez značajnih promena pri rotacionim i ekstenzionim položajima vrata.' },
+                { start: 'vertebralne', replacement: 'Vertebralne arterije su odgovarajućih promera, fiziološkog smera, suficijentnih brzina, bez značajnih promena pri rotacionim i ekstenzionim položajima vrata.' }
+            ],
+
+            setup: function (editor) {
+                editor.on('init change', function () {
+                    editor.save(); // copy content to textarea for Livewire on submit
+                });
+            }
+        });
     }
 
-    tinymce.init({
-        selector: '#nalaz',
-        plugins: ['print', 'autosave', 'textpattern'],
-        menubar: false,
-        toolbar: ['undo redo | styles | bold italic | print | restoredraft | alignleft aligncenter alignright alignjustify'],
-        textpattern_patterns: [
-            {start: 'subkl', replacement: 'Subklavijalne, aksilarne, brahijalne, radijalne i ulnarne arterije i vene su bez promena.'},
-            {start: 'ilijačne', replacement: 'Obostrano ilijačne, femoralne, poplitealne, zadnje i prednje tibijalne i peronealne vene su spontanog, fazičnog protoka, bez tromba i valvularne insuficijencije. Vv.mm.solei i gastrocnemii su bez promena.'},
-            {start: 'v.cava', replacement: 'V.cava inferior je spontanog, fazičnog protoka, bez tromba.'},
-            {start: 'karotidne', replacement: 'Obostrano karotidne arterije su odgovarajućih hemodinamskih i morfoloških osobina, bez patoloških promena. Vertebralne arterije su odgovarajućih promera, fiziološkog smera, suficijentnih brzina, bez značajnih promena pri rotacionim i ekstenzionim položajima vrata.'},
-            {start: 'vertebralne', replacement: 'Vertebralne arterije su odgovarajućih promera, fiziološkog smera, suficijentnih brzina, bez značajnih promena pri rotacionim i ekstenzionim položajima vrata.'}
-        ],
-        setup: function(editor) {
-            editor.on('init change', function () {
-                editor.save(); // copy content to textarea for Livewire on submit
-            });
-        }
-    });
-}
+    function updateCheckBox(opts) {
+        var chks = document.getElementsByName("angioloski");
 
-function updateCheckBox(opts) {
-    var chks = document.getElementsByName("angioloski");
-
-    if (opts.value == '1') { // vrsta_pregleda: angiološki
-        for (var i = 0; i <= chks.length - 1; i++) {
-            chks[i].disabled = false;
-        }
-    } else {
-        for (var i = 0; i <= chks.length - 1; i++) {
-            chks[i].disabled = true;
-            chks[i].checked = false;
+        if (opts.value == '1') { // vrsta_pregleda: angiološki
+            for (var i = 0; i <= chks.length - 1; i++) {
+                chks[i].disabled = false;
+            }
+        } else {
+            for (var i = 0; i <= chks.length - 1; i++) {
+                chks[i].disabled = true;
+                chks[i].checked = false;
+            }
         }
     }
-}
 
-function setContent(pregledNaziv) {
-    const editor = tinymce.get('nalaz');
-    if (!editor) return;
-
-    const p = editor.dom.select('#nazivPregleda')[0];
-    if (p) {
-        editor.dom.setHTML(p, pregledNaziv);
-    }
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    initTinyMCE();
-
-    const modalEl = document.getElementById('nalazModal');
-    const bootstrapModal = new bootstrap.Modal(modalEl);
-
-    // Otvaranje modal-a preko Livewire dispatch
-    window.addEventListener('open-nalaz-modal', () => {
-        bootstrapModal.show();
-    });
-
-    // Zatvaranje modala
-    document.getElementById('closeModal').addEventListener('click', () => {
-        bootstrapModal.hide();
-    });
-
-    // reinicijalizacija nakon svakog Livewire procesa
-    Livewire.hook('message.processed', () => {
-        if (!tinymce.get('nalaz')) initTinyMCE();
-    });
-    // osvezi tinymce kad se otvori modal
-    modalEl.addEventListener('shown.bs.modal', () => {
-        initTinyMCE();
-    });
-    // osvezi tinymce kad se uradi download ili delete
-    window.addEventListener('osvezi-tinymce', () => {
-        // mala pauza da DOM "preživi" akciju
-        setTimeout(() => {
-            initTinyMCE();
-        }, 20);
-    });
-
-    // pre submit-a prebaci sadržaj TinyMCE u Livewire
-    document.getElementById('pregledForm').addEventListener('submit', function() {
+    function setContent(pregledNaziv) {
         const editor = tinymce.get('nalaz');
-        if (editor) @this.set('nalaz', editor.getContent());
+        if (!editor) return;
+
+        const p = editor.dom.select('#nazivPregleda')[0];
+        if (p) {
+            editor.dom.setHTML(p, pregledNaziv);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        initTinyMCE();
+
+        const modalEl = document.getElementById('nalazModal');
+        const bootstrapModal = new bootstrap.Modal(modalEl);
+
+        // Otvaranje modal-a preko Livewire dispatch
+        window.addEventListener('open-nalaz-modal', () => {
+            bootstrapModal.show();
+        });
+
+        // Zatvaranje modala
+        document.getElementById('closeModal').addEventListener('click', () => {
+            bootstrapModal.hide();
+        });
+
+        // reinicijalizacija nakon svakog Livewire procesa
+        Livewire.hook('message.processed', () => {
+            if (!tinymce.get('nalaz')) initTinyMCE();
+        });
+        // osvezi tinymce kad se otvori modal
+        modalEl.addEventListener('shown.bs.modal', () => {
+            initTinyMCE();
+        });
+        // osvezi tinymce kad se uradi download ili delete
+        window.addEventListener('osvezi-tinymce', () => {
+            // mala pauza da DOM "preživi" akciju
+            setTimeout(() => {
+                initTinyMCE();
+            }, 20);
+        });
+
+        // pre submit-a prebaci sadržaj TinyMCE u Livewire
+        document.getElementById('pregledForm').addEventListener('submit', function() {
+            const editor = tinymce.get('nalaz');
+            if (editor) @this.set('nalaz', editor.getContent());
+        });
     });
-});
-</script>
+    </script>
 @endpush

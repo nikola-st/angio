@@ -15,7 +15,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role',
+        'role_id',
     ];
 
     protected $hidden = [
@@ -23,21 +23,29 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    // Relacija 1:1 sa Pacijent
     public function pacijent()
     {
         return $this->hasOne(Pacijent::class, 'user_id', 'id');
     }
 
-    // Role check
+    public function doctor()
+    {
+        return $this->hasOne(Doctor::class, 'user_id', 'id');
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
     public function isDoctor(): bool
     {
-        return $this->role === 'doctor';
+        return $this->role?->name === 'doctor';
     }
 
     public function isPatient(): bool
     {
-        return $this->role === 'patient';
+        return $this->role?->name === 'patient';
     }
 
     public function setPassword($token)
