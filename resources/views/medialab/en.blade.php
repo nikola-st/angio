@@ -49,16 +49,15 @@
         @if (Route::has('login'))
             <div class="hidden fixed top-0 right-0 px-6 py-4 sm:block">
                 @auth
-                        @if(auth()->user()->isDoctor())
-                            <a href="{{ route('doktor') }}" class="text-sm text-gray-700 dark:text-gray-500 underline">
-                                RAD SA PACIJENTIMA
-                            </a>
-                        @elseif(auth()->user()->isPatient())
-                            <a href="{{ route('moji-pregledi') }}" class="text-sm text-gray-700 dark:text-gray-500 underline">
-                                MOJI PREGLEDI
-                            </a>
-                        @endif
-
+                    @if(auth()->user()->isDoctor())
+                        <a href="{{ route('doktor') }}" class="text-sm text-gray-700 dark:text-gray-500 underline">
+                            RAD SA PACIJENTIMA
+                        </a>
+                    @elseif(auth()->user()->isPatient())
+                        <a href="{{ route('moji-pregledi') }}" class="text-sm text-gray-700 dark:text-gray-500 underline">
+                            MOJI PREGLEDI
+                        </a>
+                    @endif
                     <!-- Logout -->
                     <a href="{{ route('logout') }}"class="text-sm text-gray-700 dark:text-gray-500 underline ml-4"onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                         Logout
@@ -76,8 +75,6 @@
       </div>
     </div>
   </div>
-
-
 
   <!-- ======= Header ======= -->
   <header id="header" class="fixed-top">
