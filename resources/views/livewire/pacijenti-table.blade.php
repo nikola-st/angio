@@ -9,7 +9,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h4>svi pacijenti
-                            <input type="search" wire:model="search" class="form-control float-end mx-2" placeholder="Traži po imenu i prezimenu..." style="width: 230px" />
+                            <input type="search" wire:model.live="search" class="form-control float-end mx-2" placeholder="Traži po imenu i prezimenu..." style="width: 230px" />
                             <button type="button" class="btn btn-primary float-end" data-bs-toggle="modal" data-bs-target="#pacijentModal">Prvi pregled</button>
                         </h4>
                     </div>

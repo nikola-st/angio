@@ -32,7 +32,7 @@ class PreglediTable extends Component
     public function mount($idpacijenta = null)
     {
         $this->idpacijenta = $idpacijenta;
-        // Ensure storage dir exists
+        // Osiguraj da storage nalazi postoji
         if (!Storage::disk('local')->exists('nalazi')) {
             Storage::disk('local')->makeDirectory('nalazi');
         }
@@ -159,6 +159,7 @@ class PreglediTable extends Component
 
             $this->pregledId = $idpregleda;
             $this->content = $content;
+
         } catch (Exception $e) {
             session()->flash('message', 'Greška pri učitavanju nalaza: ' . $e->getMessage());
         }
@@ -168,7 +169,7 @@ class PreglediTable extends Component
         ]);
     }
 
-   public function downloadPregled($idpregleda)
+    public function downloadPregled($idpregleda)
     {
         $pregled = Pregled::findOrFail($idpregleda);
 
@@ -188,7 +189,7 @@ class PreglediTable extends Component
         $fullPath = Storage::disk('local')->path($relativePath);
 
         $this->dispatch('osvezi-tinymce');
-        
+
         return response()->download($fullPath, $downloadName);
     }
 
