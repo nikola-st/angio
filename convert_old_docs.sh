@@ -1,6 +1,8 @@
 #!/bin/bash
 
-INPUT_DIR="/Users/nikola/Herd/angio/storage/app/private/nalazi"
+# Korenski folder projekta (gde se skripta pokreće)
+BASE_DIR="$(pwd)"
+INPUT_DIR="$BASE_DIR/storage/app/private/nalazi"
 OUTPUT_DIR="$INPUT_DIR/docx"
 
 mkdir -p "$OUTPUT_DIR"

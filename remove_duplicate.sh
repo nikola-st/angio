@@ -1,24 +1,23 @@
 #!/bin/bash
 
-DOCX_DIR="/Users/nikola/Herd/angio/storage/app/private/nalazi/docx"
-DOC_DIR="/Users/nikola/Herd/angio/storage/app/private/nalazi"
+# Korenski folder projekta (gde se skripta pokreće)
+BASE_DIR="$(pwd)"
+DOC_DIR="$BASE_DIR/storage/app/private/nalazi"
+DOCX_DIR="$DOC_DIR/docx"
 
-echo "1) Brisanje duplikata u docx folderu..."
+echo "Brišem .doc fajlove koji imaju .docx ekvivalent u folderu 'docx'..."
 
-# Nađi duplikate po imenu (zadrži prvi) i obriši ostale
-find "$DOCX_DIR" -type f -name "*.docx" -print0 | \
-    awk -v RS='\0' '{n=split($0,a,"/"); name=a[n]; if(seen[name]++) print $0}' | \
-    xargs -0 -I{} rm -v "{}"
-
-echo "2) Brisanje doc fajlova koji imaju docx ekvivalent..."
-
-# Nađi sve .doc fajlove
-find "$DOC_DIR" -type f -name "*.doc" -print0 | while IFS= read -r -d '' docfile; do
+find "$DOC_DIR" -maxdepth 1 -type f -name "*.doc" -print0 | while IFS= read -r -d '' docfile; do
     base=$(basename "$docfile" .doc)
-    if find "$DOCX_DIR" -maxdepth 1 -type f -name "$base.docx" | grep -q .; then
+    if [ -f "$DOCX_DIR/$base.docx" ]; then
         echo "Brišem: $docfile"
         rm -v "$docfile"
     fi
 done
 
-echo "Čišćenje završeno."
+echo "Gotovo. Svi .doc fajlovi koji imaju .docx ekvivalent su obrisani."
+
+echo "Premeštam sve .docx fajlove iz podfoldera 'docx' u glavni folder..."
+mv -n "$DOCX_DIR"/*.docx "$DOC_DIR"/
+
+echo "Premeštanje završeno."
