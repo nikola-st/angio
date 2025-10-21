@@ -89,33 +89,33 @@ class PreglediTable extends Component
     // Kreira Word (.docx) iz HTML sadržaja i čuva na disk/lokalno skladište.
     protected function createNalaz(string $nalazContent, $idpacijenta, $idpregleda): string
     {
-        // create phpword and add html
+        // kreiraja phpword i dodaj html
         $phpWord = new PhpWord();
         $section = $phpWord->addSection();
-        // Html::addHtml can throw, wrap in try/catch above
+        // Html::addHtml može baciti izuzetak ako je HTML neispravan
         Html::addHtml($section, $nalazContent ?? '', false, false);
 
         $phpWord->setDefaultFontSize(12);
         $phpWord->setDefaultFontName('Arial');
 
-        // prepare filename and path
+        // pripremi ime fajla i putanju
         $fileName = "{$idpacijenta}-{$idpregleda}.docx";
         $relativePath = "nalazi/{$fileName}";
 
-        // Use a temporary stream to write the docx and then store via Storage
+        // Koristi temp fajl za pisanje
         $tempFile = tmpfile();
         $meta = stream_get_meta_data($tempFile);
         $tmpFilename = $meta['uri'];
 
-        // write using Word2007 writer
+        // upiši u Word 2007 format
         $writer = new Word2007($phpWord);
         $writer->save($tmpFilename);
 
-        // read temp file and put into storage
+        // pročitaj iz temp i sačuvaj u storage
         $contents = file_get_contents($tmpFilename);
         Storage::disk('local')->put($relativePath, $contents);
 
-        // close and remove temp
+        // zatvori i ukloni temp fajl
         fclose($tempFile);
 
         return $relativePath;
