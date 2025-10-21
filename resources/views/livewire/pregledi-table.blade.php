@@ -59,15 +59,15 @@
                     <p class="form-label">Vrsta angiološkog pregleda</p>
                     <div id="angioloski" class="mb-3">
                         @php
-                        $angioloskiOpcije = [
-                            1 => ['naziv' => 'COLOR-DUPLEX KRVNIH SUDOVA NOGU I DONJIH EKSTREMITETA:', 'label' => 'vene nogu'],
-                            2 => ['naziv' => 'COLOR-DUPLEX KRVNIH SUDOVA RUKU I GORNJIH EKSTREMITETA:', 'label' => 'vene ruku'],
-                            3 => ['naziv' => 'COLOR-DUPLEX SCAN ARTERIJA DONJIH EKSTREMITETA:', 'label' => 'arterije nogu'],
-                            4 => ['naziv' => 'COLOR-DUPLEX ARTERIJA GORNJIH EKSTREMITETA:', 'label' => 'arterije ruku'],
-                            5 => ['naziv' => 'COLOR-DUPLEX SCAN KAROTIDNIH I VERTEBRALNIH ARTERIJA EKSTRAKRANIJALNO:', 'label' => 'karotide'],
-                            6 => ['naziv' => 'COLOR-DUPLEX ABDOMINALNE AORTE:', 'label' => 'aorta'],
-                            7 => ['naziv' => 'COLOR-DUPLEX', 'label' => 'ostalo'],
-                        ];
+                            $angioloskiOpcije = [
+                                1 => ['naziv' => 'COLOR-DUPLEX KRVNIH SUDOVA NOGU I DONJIH EKSTREMITETA:', 'label' => 'vene nogu'],
+                                2 => ['naziv' => 'COLOR-DUPLEX KRVNIH SUDOVA RUKU I GORNJIH EKSTREMITETA:', 'label' => 'vene ruku'],
+                                3 => ['naziv' => 'COLOR-DUPLEX SCAN ARTERIJA DONJIH EKSTREMITETA:', 'label' => 'arterije nogu'],
+                                4 => ['naziv' => 'COLOR-DUPLEX ARTERIJA GORNJIH EKSTREMITETA:', 'label' => 'arterije ruku'],
+                                5 => ['naziv' => 'COLOR-DUPLEX SCAN KAROTIDNIH I VERTEBRALNIH ARTERIJA EKSTRAKRANIJALNO:', 'label' => 'karotide'],
+                                6 => ['naziv' => 'COLOR-DUPLEX ABDOMINALNE AORTE:', 'label' => 'aorta'],
+                                7 => ['naziv' => 'COLOR-DUPLEX', 'label' => 'ostalo'],
+                            ];
                         @endphp
 
                         @foreach($angioloskiOpcije as $key => $opcija)
@@ -124,96 +124,88 @@
 
 @push('scripts')
     <script>
-    function initTinyMCE() {
-        if (typeof tinymce === 'undefined') return;
+        document.addEventListener('DOMContentLoaded', function () {
 
-        if (tinymce.editors.length > 0) {
+            function initTinyMCE() {
+                if (!window.tinymce) {
+                    console.warn('Tekst editor nije učitan');
+                    return;
+                }
+
+                // Obriši prethodnu instancu ako postoji
                 tinymce.remove();
-        }
 
-        tinymce.init({
-            selector: '#nalaz',
-            plugins: ['print', 'autosave', 'textpattern'],
-            menubar: false,
-            toolbar: ['undo redo | styles | bold italic | print | restoredraft | alignleft aligncenter alignright alignjustify'],
-            textpattern_patterns: [
-                { start: 'subkl', replacement: 'Subklavijalne, aksilarne, brahijalne, radijalne i ulnarne arterije i vene su bez promena.' },
-                { start: 'ilijačne', replacement: 'Obostrano ilijačne, femoralne, poplitealne, zadnje i prednje tibijalne i peronealne vene su spontanog, fazičnog protoka, bez tromba i valvularne insuficijencije. Vv.mm.solei i gastrocnemii su bez promena.' },
-                { start: 'v.cava', replacement: 'V.cava inferior je spontanog, fazičnog protoka, bez tromba.' },
-                { start: 'karotidne', replacement: 'Obostrano karotidne arterije su odgovarajućih hemodinamskih i morfoloških osobina, bez patoloških promena. Vertebralne arterije su odgovarajućih promera, fiziološkog smera, suficijentnih brzina, bez značajnih promena pri rotacionim i ekstenzionim položajima vrata.' },
-                { start: 'vertebralne', replacement: 'Vertebralne arterije su odgovarajućih promera, fiziološkog smera, suficijentnih brzina, bez značajnih promena pri rotacionim i ekstenzionim položajima vrata.' }
-            ],
+                tinymce.init({
+                    selector: '#nalaz',
+                    plugins: [
+                        'lists', 'link', 'autosave', 'code', 'preview', 'fullscreen', 'wordcount', 'table'
+                    ],
+                    menubar: false,
+                    toolbar: 'undo redo | bold italic underline | bullist numlist | link | restoredraft | code preview fullscreen',
+                    height: 600,
+                    branding: false,
+                    promotion: false,
 
-            setup: function (editor) {
-                editor.on('init change', function () {
-                    editor.save(); // copy content to textarea for Livewire on submit
+                    text_patterns: [
+                        { start: 'subkl', replacement: 'Subklavijalne, aksilarne, brahijalne, radijalne i ulnarne arterije i vene su bez promena.' },
+                        { start: 'ilijačne', replacement: 'Obostrano ilijačne, femoralne, poplitealne, zadnje i prednje tibijalne i peronealne vene su spontanog, fazičnog protoka, bez tromba i valvularne insuficijencije. Vv.mm.solei i gastrocnemii su bez promena.' },
+                        { start: 'v.cava', replacement: 'V.cava inferior je spontanog, fazičnog protoka, bez tromba.' },
+                        { start: 'karotidne', replacement: 'Obostrano karotidne arterije su odgovarajućih hemodinamskih i morfoloških osobina, bez patoloških promena. Vertebralne arterije su odgovarajućih promera, fiziološkog smera, suficijentnih brzina, bez značajnih promena pri rotacionim i ekstenzionim položajima vrata.' },
+                        { start: 'vertebralne', replacement: 'Vertebralne arterije su odgovarajućih promera, fiziološkog smera, suficijentnih brzina, bez značajnih promena pri rotacionim i ekstenzionim položajima vrata.' }
+                    ],
+
+                    setup: (editor) => {
+                        // Sačuvaj sinhronizaciju sa Livewire stanjem
+                        editor.on('init change input undo redo', () => {
+                            editor.save();
+                        });
+                    }
                 });
             }
-        });
-    }
 
-    function updateCheckBox(opts) {
-        var chks = document.getElementsByName("angioloski");
+            // helpers
+            window.setContent = function (pregledNaziv) {
+                const editor = tinymce.get('nalaz');
+                if (editor) {
+                    const p = editor.dom.select('#nazivPregleda')[0];
+                    if (p) editor.dom.setHTML(p, pregledNaziv);
+                }
+            };
 
-        if (opts.value == '1') { // vrsta_pregleda: angiološki
-            for (var i = 0; i <= chks.length - 1; i++) {
-                chks[i].disabled = false;
+            window.updateCheckBox = function (opts) {
+                document.querySelectorAll('[name="angioloski"]').forEach(chk => {
+                    chk.disabled = opts.value !== '1';
+                    if (opts.value !== '1') chk.checked = false;
+                });
+            };
+
+            // modal
+            const modalEl = document.getElementById('nalazModal');
+            const bootstrapModal = modalEl ? new bootstrap.Modal(modalEl) : null;
+
+            if (modalEl) {
+                modalEl.addEventListener('shown.bs.modal', initTinyMCE);
+                document.getElementById('closeModal')?.addEventListener('click', () => bootstrapModal?.hide());
             }
-        } else {
-            for (var i = 0; i <= chks.length - 1; i++) {
-                chks[i].disabled = true;
-                chks[i].checked = false;
+
+            window.addEventListener('open-nalaz-modal', () => bootstrapModal?.show());
+            window.addEventListener('osvezi-tinymce', () => setTimeout(initTinyMCE, 50));
+
+            // ponovna inicijalizacija nakon Livewire ažuriranja
+            if (window.Livewire) {
+                Livewire.hook('message.processed', () => {
+                    if (!tinymce.get('nalaz')) initTinyMCE();
+                });
             }
-        }
-    }
 
-    function setContent(pregledNaziv) {
-        const editor = tinymce.get('nalaz');
-        if (!editor) return;
+            // Sinhronizacija pre slanja forme
+            document.getElementById('pregledForm')?.addEventListener('submit', () => {
+                const editor = tinymce.get('nalaz');
+                if (editor) @this.set('nalaz', editor.getContent());
+            });
 
-        const p = editor.dom.select('#nazivPregleda')[0];
-        if (p) {
-            editor.dom.setHTML(p, pregledNaziv);
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        initTinyMCE();
-
-        const modalEl = document.getElementById('nalazModal');
-        const bootstrapModal = new bootstrap.Modal(modalEl);
-
-        // Otvaranje modal-a preko Livewire dispatch
-        window.addEventListener('open-nalaz-modal', () => {
-            bootstrapModal.show();
-        });
-
-        // Zatvaranje modala
-        document.getElementById('closeModal').addEventListener('click', () => {
-            bootstrapModal.hide();
-        });
-
-        // reinicijalizacija nakon svakog Livewire procesa
-        Livewire.hook('message.processed', () => {
-            if (!tinymce.get('nalaz')) initTinyMCE();
-        });
-        // osvezi tinymce kad se otvori modal
-        modalEl.addEventListener('shown.bs.modal', () => {
+            // Inicijalno učitavanje TinyMCE
             initTinyMCE();
         });
-        // osvezi tinymce kad se uradi download ili delete
-        window.addEventListener('osvezi-tinymce', () => {
-            // mala pauza da DOM "preživi" akciju
-            setTimeout(() => {
-                initTinyMCE();
-            }, 20);
-        });
-
-        // pre submit-a prebaci sadržaj TinyMCE u Livewire
-        document.getElementById('pregledForm').addEventListener('submit', function() {
-            const editor = tinymce.get('nalaz');
-            if (editor) @this.set('nalaz', editor.getContent());
-        });
-    });
     </script>
 @endpush

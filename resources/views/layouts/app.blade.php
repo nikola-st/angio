@@ -14,7 +14,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
     <!-- TinyMCE -->
-    <script src="https://cdn.tiny.cloud/1/eo2f5dxwbxpgmsxsmeft2ggfac2r5jyyw6ykhnydyqd68qsw/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="https://cdn.tiny.cloud/1/eo2f5dxwbxpgmsxsmeft2ggfac2r5jyyw6ykhnydyqd68qsw/tinymce/8/tinymce.min.js" referrerpolicy="origin"></script>
 
     @livewireStyles
 </head>

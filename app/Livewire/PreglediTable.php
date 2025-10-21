@@ -89,34 +89,44 @@ class PreglediTable extends Component
     // Kreira Word (.docx) iz HTML sadržaja i čuva na disk/lokalno skladište.
     protected function createNalaz(string $nalazContent, $idpacijenta, $idpregleda): string
     {
-        // kreiraja phpword i dodaj html
+        // preuzmi HTML sadržaj
+        $html = $nalazContent;
+
+        // Zameni sve <br> sa self-closing <br/>
+        $html = str_replace(['<br>', '<br >'], '<br/>', $html);
+
+        // Ukloni prazne <p>
+        $html = preg_replace('/<p>\s*<\/p>/', '', $html);
+
+        // kloni sve script/style tagove
+        $html = preg_replace('#<(script|style).*?>.*?</\1>#si', '', $html);
+
+        // konvertuj <div style="text-align:center"> u <p style="text-align:center">
+        $html = preg_replace('#<div(.*?)>#i', '<p$1>', $html);
+        $html = str_replace('</div>', '</p>', $html);
+
+        // Kreiraj PhpWord dokument
         $phpWord = new PhpWord();
-        $section = $phpWord->addSection();
-        // Html::addHtml može baciti izuzetak ako je HTML neispravan
-        Html::addHtml($section, $nalazContent ?? '', false, false);
-
-        $phpWord->setDefaultFontSize(12);
         $phpWord->setDefaultFontName('Arial');
+        $phpWord->setDefaultFontSize(12);
 
-        // pripremi ime fajla i putanju
+        $section = $phpWord->addSection();
+
+        try {
+            // dodaj HTML u sekciju
+            Html::addHtml($section, $html, false, false);
+        } catch (Exception $e) {
+            throw new Exception('Greška prilikom parsiranja HTML sadržaja za Word: ' . $e->getMessage());
+        }
+
+        // Pripremi putanju za čuvanje
         $fileName = "{$idpacijenta}-{$idpregleda}.docx";
         $relativePath = "nalazi/{$fileName}";
+        $fullPath = Storage::disk('local')->path($relativePath);
 
-        // Koristi temp fajl za pisanje
-        $tempFile = tmpfile();
-        $meta = stream_get_meta_data($tempFile);
-        $tmpFilename = $meta['uri'];
-
-        // upiši u Word 2007 format
+        // Sačuvaj Word dokument
         $writer = new Word2007($phpWord);
-        $writer->save($tmpFilename);
-
-        // pročitaj iz temp i sačuvaj u storage
-        $contents = file_get_contents($tmpFilename);
-        Storage::disk('local')->put($relativePath, $contents);
-
-        // zatvori i ukloni temp fajl
-        fclose($tempFile);
+        $writer->save($fullPath);
 
         return $relativePath;
     }
@@ -157,7 +167,6 @@ class PreglediTable extends Component
                                 $paragraphText .= "\n"; // čuva line break
                             }
                         }
-
                         $paragraphText = trim($paragraphText, "\r\n ");
 
                         // Dodaje alignment
@@ -179,7 +188,6 @@ class PreglediTable extends Component
                                 . "</div>";
                         }
                     }
-
                     // uključi pojedinačne Text elemente
                     elseif ($element instanceof \PhpOffice\PhpWord\Element\Text) {
                         $text = trim($element->getText());
@@ -191,7 +199,6 @@ class PreglediTable extends Component
                                 . "</div>";
                         }
                     }
-
                     // uključi line breakove
                     elseif ($element instanceof \PhpOffice\PhpWord\Element\TextBreak) {
                         $content .= "<br>";
@@ -201,7 +208,6 @@ class PreglediTable extends Component
 
             $this->pregledId = $idpregleda;
             $this->content = $content;
-
         } catch (Exception $e) {
             session()->flash('message', 'Greška pri učitavanju nalaza: ' . $e->getMessage());
             return;
@@ -210,7 +216,8 @@ class PreglediTable extends Component
         $this->dispatch('open-nalaz-modal', [
             'content' => $this->content,
         ]);
-}
+    }
+
     public function downloadPregled($idpregleda)
     {
         $pregled = Pregled::findOrFail($idpregleda);
