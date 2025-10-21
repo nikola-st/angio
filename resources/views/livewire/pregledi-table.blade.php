@@ -136,9 +136,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         tinymce.init({
             selector: '#nalaz',
-            plugins: ['autosave', 'fullscreen'], // minimal required
+            plugins: ['autosave', 'fullscreen'],
             menubar: false,
-            toolbar: 'bold italic underline | alignleft aligncenter alignright alignjustify | restoredraft | fullscreen | printbutton',
+            toolbar: 'bold italic underline | alignleft aligncenter alignright alignjustify | resetbutton | fullscreen | printbutton',
             height: 600,
             branding: false,
             promotion: false,
@@ -152,20 +152,35 @@ document.addEventListener('DOMContentLoaded', function () {
             ],
 
             setup: (editor) => {
+                // Dugme za reset TinyMCE sadržaja
+                let defaultContent;
 
+                editor.on('init', () => {
+                    defaultContent = editor.getContent(); // sačuvaj početni HTML
+                });
+
+                editor.ui.registry.addButton('resetbutton', {
+                    text: 'RESETUJ',
+                    icon: 'undo',
+                    tooltip: 'Vrati na početni tekst',
+                    onAction: () => {
+                        editor.resetContent(defaultContent); // vrati na početni HTML
+                        editor.save(); // sinhronizacija sa Livewire
+                    }
+                });
                 // Dugme za štampu tinymce sadržaja
                 editor.ui.registry.addButton('printbutton', {
-                    text: 'Print',
+                    text: 'ŠTAMPAJ IZVEŠTAJ',
                     icon: 'print',
-                    tooltip: 'Print content',
+                    tooltip: 'Pokreće štampu izveštaja',
                     onAction: () => {
-                        const content = editor.getContent(); // only editor content
+                        const content = editor.getContent(); // samo sadržaj editora
                         const printWindow = window.open('', '_blank');
                         printWindow.document.open();
                         printWindow.document.write(`
                             <html>
                             <head>
-                                <title>Print</title>
+                                <title>Štampa</title>
                             </head>
                             <body>
                                 ${content}
@@ -179,7 +194,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 });
 
-                // Zadrži sinronizaciju sadržaja sa Livewire komponentom
+                // Ne gubi sadržaj sa ažuriranjem Livewire komponente
                 editor.on('init change input undo redo', () => {
                     editor.save();
                 });
@@ -187,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // helpers
+    // helpers za naziv pregleda i checkbox angiološki
     window.setContent = function (pregledNaziv) {
         const editor = tinymce.get('nalaz');
         if (editor) {
@@ -203,7 +218,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     };
 
-    // modal
+    // otvaranje i zatvaranje modala
     const modalEl = document.getElementById('nalazModal');
     const bootstrapModal = modalEl ? new bootstrap.Modal(modalEl) : null;
 
