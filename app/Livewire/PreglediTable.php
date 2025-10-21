@@ -145,14 +145,56 @@ class PreglediTable extends Component
 
             foreach ($phpWord->getSections() as $section) {
                 foreach ($section->getElements() as $element) {
+
+                    // Paragrafi sa više Text elemenata
                     if ($element instanceof \PhpOffice\PhpWord\Element\TextRun) {
+                        $paragraphText = '';
+
                         foreach ($element->getElements() as $child) {
                             if ($child instanceof \PhpOffice\PhpWord\Element\Text) {
-                                $content .= htmlspecialchars($child->getText()) . '<br>';
+                                $paragraphText .= $child->getText();
+                            } elseif ($child instanceof \PhpOffice\PhpWord\Element\TextBreak) {
+                                $paragraphText .= "\n"; // čuva line break
                             }
                         }
-                    } elseif ($element instanceof \PhpOffice\PhpWord\Element\Text) {
-                        $content .= htmlspecialchars($element->getText()) . '<br>';
+
+                        $paragraphText = trim($paragraphText, "\r\n ");
+
+                        // Dodaje alignment
+                        $alignment = 'left';
+                        $style = $element->getParagraphStyle();
+                        if ($style && method_exists($style, 'getAlignment')) {
+                            $alignVal = $style->getAlignment();
+                            if ($alignVal) {
+                                $alignment = strtolower($alignVal);
+                            }
+                        }
+
+                        // Sačuvaj prazne paragrafe
+                        if ($paragraphText === '') {
+                            $content .= "<div style='height: 1em;'>&nbsp;</div>";
+                        } else {
+                            $content .= "<div style='text-align: {$alignment}; margin-bottom: 6px; white-space: pre-line;'>"
+                                . htmlspecialchars($paragraphText)
+                                . "</div>";
+                        }
+                    }
+
+                    // uključi pojedinačne Text elemente
+                    elseif ($element instanceof \PhpOffice\PhpWord\Element\Text) {
+                        $text = trim($element->getText());
+                        if ($text === '') {
+                            $content .= "<div style='height: 1em;'>&nbsp;</div>";
+                        } else {
+                            $content .= "<div style='text-align: left; margin-bottom: 6px; white-space: pre-line;'>"
+                                . htmlspecialchars($text)
+                                . "</div>";
+                        }
+                    }
+
+                    // uključi line breakove
+                    elseif ($element instanceof \PhpOffice\PhpWord\Element\TextBreak) {
+                        $content .= "<br>";
                     }
                 }
             }
@@ -162,13 +204,13 @@ class PreglediTable extends Component
 
         } catch (Exception $e) {
             session()->flash('message', 'Greška pri učitavanju nalaza: ' . $e->getMessage());
+            return;
         }
 
         $this->dispatch('open-nalaz-modal', [
             'content' => $this->content,
         ]);
-    }
-
+}
     public function downloadPregled($idpregleda)
     {
         $pregled = Pregled::findOrFail($idpregleda);
