@@ -46,7 +46,7 @@
 
 
     <!-- Main content -->
-    <main class="container py-5">
+    <main class="container py-0">
         @yield('content')
         {{ $slot ?? '' }}
     </main>

@@ -123,89 +123,110 @@
 </div>
 
 @push('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
+<script>
+document.addEventListener('DOMContentLoaded', function () {
 
-            function initTinyMCE() {
-                if (!window.tinymce) {
-                    console.warn('Tekst editor nije učitan');
-                    return;
-                }
+    function initTinyMCE() {
+        if (!window.tinymce) {
+            console.warn('Tekst editor nije učitan');
+            return;
+        }
 
-                // Obriši prethodnu instancu ako postoji
-                tinymce.remove();
+        tinymce.remove();
 
-                tinymce.init({
-                    selector: '#nalaz',
-                    plugins: [
-                        'lists', 'link', 'autosave', 'code', 'preview', 'fullscreen', 'wordcount', 'table'
-                    ],
-                    menubar: false,
-                    toolbar: 'undo redo | bold italic underline | bullist numlist | link | restoredraft | code preview fullscreen',
-                    height: 600,
-                    branding: false,
-                    promotion: false,
+        tinymce.init({
+            selector: '#nalaz',
+            plugins: ['autosave', 'fullscreen'], // minimal required
+            menubar: false,
+            toolbar: 'bold italic underline | alignleft aligncenter alignright alignjustify | restoredraft | fullscreen | printbutton',
+            height: 600,
+            branding: false,
+            promotion: false,
 
-                    text_patterns: [
-                        { start: 'subkl', replacement: 'Subklavijalne, aksilarne, brahijalne, radijalne i ulnarne arterije i vene su bez promena.' },
-                        { start: 'ilijačne', replacement: 'Obostrano ilijačne, femoralne, poplitealne, zadnje i prednje tibijalne i peronealne vene su spontanog, fazičnog protoka, bez tromba i valvularne insuficijencije. Vv.mm.solei i gastrocnemii su bez promena.' },
-                        { start: 'v.cava', replacement: 'V.cava inferior je spontanog, fazičnog protoka, bez tromba.' },
-                        { start: 'karotidne', replacement: 'Obostrano karotidne arterije su odgovarajućih hemodinamskih i morfoloških osobina, bez patoloških promena. Vertebralne arterije su odgovarajućih promera, fiziološkog smera, suficijentnih brzina, bez značajnih promena pri rotacionim i ekstenzionim položajima vrata.' },
-                        { start: 'vertebralne', replacement: 'Vertebralne arterije su odgovarajućih promera, fiziološkog smera, suficijentnih brzina, bez značajnih promena pri rotacionim i ekstenzionim položajima vrata.' }
-                    ],
+            text_patterns: [
+                { start: 'subkl', replacement: 'Subklavijalne, aksilarne, brahijalne, radijalne i ulnarne arterije i vene su bez promena.' },
+                { start: 'ilijačne', replacement: 'Obostrano ilijačne, femoralne, poplitealne, zadnje i prednje tibijalne i peronealne vene su spontanog, fazičnog protoka, bez tromba i valvularne insuficijencije. Vv.mm.solei i gastrocnemii su bez promena.' },
+                { start: 'v.cava', replacement: 'V.cava inferior je spontanog, fazičnog protoka, bez tromba.' },
+                { start: 'karotidne', replacement: 'Obostrano karotidne arterije su odgovarajućih hemodinamskih i morfoloških osobina, bez patoloških promena. Vertebralne arterije su odgovarajućih promera, fiziološkog smera, suficijentnih brzina, bez značajnih promena pri rotacionim i ekstenzionim položajima vrata.' },
+                { start: 'vertebralne', replacement: 'Vertebralne arterije su odgovarajućih promera, fiziološkog smera, suficijentnih brzina, bez značajnih promena pri rotacionim i ekstenzionim položajima vrata.' }
+            ],
 
-                    setup: (editor) => {
-                        // Sačuvaj sinhronizaciju sa Livewire stanjem
-                        editor.on('init change input undo redo', () => {
-                            editor.save();
-                        });
+            setup: (editor) => {
+
+                // Dugme za štampu tinymce sadržaja
+                editor.ui.registry.addButton('printbutton', {
+                    text: 'Print',
+                    icon: 'print',
+                    tooltip: 'Print content',
+                    onAction: () => {
+                        const content = editor.getContent(); // only editor content
+                        const printWindow = window.open('', '_blank');
+                        printWindow.document.open();
+                        printWindow.document.write(`
+                            <html>
+                            <head>
+                                <title>Print</title>
+                            </head>
+                            <body>
+                                ${content}
+                            </body>
+                            </html>
+                        `);
+                        printWindow.document.close();
+                        printWindow.focus();
+                        printWindow.print();
+                        printWindow.close();
                     }
                 });
-            }
 
-            // helpers
-            window.setContent = function (pregledNaziv) {
-                const editor = tinymce.get('nalaz');
-                if (editor) {
-                    const p = editor.dom.select('#nazivPregleda')[0];
-                    if (p) editor.dom.setHTML(p, pregledNaziv);
-                }
-            };
-
-            window.updateCheckBox = function (opts) {
-                document.querySelectorAll('[name="angioloski"]').forEach(chk => {
-                    chk.disabled = opts.value !== '1';
-                    if (opts.value !== '1') chk.checked = false;
-                });
-            };
-
-            // modal
-            const modalEl = document.getElementById('nalazModal');
-            const bootstrapModal = modalEl ? new bootstrap.Modal(modalEl) : null;
-
-            if (modalEl) {
-                modalEl.addEventListener('shown.bs.modal', initTinyMCE);
-                document.getElementById('closeModal')?.addEventListener('click', () => bootstrapModal?.hide());
-            }
-
-            window.addEventListener('open-nalaz-modal', () => bootstrapModal?.show());
-            window.addEventListener('osvezi-tinymce', () => setTimeout(initTinyMCE, 50));
-
-            // ponovna inicijalizacija nakon Livewire ažuriranja
-            if (window.Livewire) {
-                Livewire.hook('message.processed', () => {
-                    if (!tinymce.get('nalaz')) initTinyMCE();
+                // Zadrži sinronizaciju sadržaja sa Livewire komponentom
+                editor.on('init change input undo redo', () => {
+                    editor.save();
                 });
             }
-
-            // Sinhronizacija pre slanja forme
-            document.getElementById('pregledForm')?.addEventListener('submit', () => {
-                const editor = tinymce.get('nalaz');
-                if (editor) @this.set('nalaz', editor.getContent());
-            });
-
-            // Inicijalno učitavanje TinyMCE
-            initTinyMCE();
         });
-    </script>
+    }
+
+    // helpers
+    window.setContent = function (pregledNaziv) {
+        const editor = tinymce.get('nalaz');
+        if (editor) {
+            const p = editor.dom.select('#nazivPregleda')[0];
+            if (p) editor.dom.setHTML(p, pregledNaziv);
+        }
+    };
+
+    window.updateCheckBox = function (opts) {
+        document.querySelectorAll('[name="angioloski"]').forEach(chk => {
+            chk.disabled = opts.value !== '1';
+            if (opts.value !== '1') chk.checked = false;
+        });
+    };
+
+    // modal
+    const modalEl = document.getElementById('nalazModal');
+    const bootstrapModal = modalEl ? new bootstrap.Modal(modalEl) : null;
+
+    if (modalEl) {
+        modalEl.addEventListener('shown.bs.modal', initTinyMCE);
+        document.getElementById('closeModal')?.addEventListener('click', () => bootstrapModal?.hide());
+    }
+
+    window.addEventListener('open-nalaz-modal', () => bootstrapModal?.show());
+    window.addEventListener('osvezi-tinymce', () => setTimeout(initTinyMCE, 50));
+
+    if (window.Livewire) {
+        Livewire.hook('message.processed', () => {
+            if (!tinymce.get('nalaz')) initTinyMCE();
+        });
+    }
+
+    document.getElementById('pregledForm')?.addEventListener('submit', () => {
+        const editor = tinymce.get('nalaz');
+        if (editor) @this.set('nalaz', editor.getContent());
+    });
+
+    initTinyMCE();
+});
+</script>
 @endpush
