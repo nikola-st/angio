@@ -63,7 +63,7 @@ class PacijentiTable extends Component
                 'name' => $pacijent->imeprezime,
                 'email' => $pacijent->email,
                 'password' => Hash::make('angio1234'),
-                'role' => 'patient',
+                'role_id' => Role::patientId(),
             ]);
 
             $pacijent->user_id = $user->id;
@@ -107,13 +107,13 @@ class PacijentiTable extends Component
             $user = User::create([
                 'name' => $pacijent->imeprezime,
                 'email' => $pacijent->email,
-                'password' => Hash::make('temp1234'),
-                'role' => 'patient',
+                'password' => Hash::make('angio1234'),
+                'role_id' => Role::patientId(),
             ]);
 
             $pacijent->user_id = $user->id;
             $pacijent->save();
-            
+
             $token = Password::createToken($pacijent);
             $pacijent->notify(new SetPassword($token));
         }

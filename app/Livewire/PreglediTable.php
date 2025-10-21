@@ -179,7 +179,7 @@ class PreglediTable extends Component
                             }
                         }
 
-                        // Sačuvaj prazne paragrafe
+                        // Uključi prazne paragrafe
                         if ($paragraphText === '') {
                             $content .= "<div style='height: 1em;'>&nbsp;</div>";
                         } else {
@@ -188,7 +188,7 @@ class PreglediTable extends Component
                                 . "</div>";
                         }
                     }
-                    // uključi pojedinačne Text elemente
+                    // Uključi pojedinačne Text elemente
                     elseif ($element instanceof \PhpOffice\PhpWord\Element\Text) {
                         $text = trim($element->getText());
                         if ($text === '') {
@@ -199,7 +199,7 @@ class PreglediTable extends Component
                                 . "</div>";
                         }
                     }
-                    // uključi line breakove
+                    // Uključi line breakove
                     elseif ($element instanceof \PhpOffice\PhpWord\Element\TextBreak) {
                         $content .= "<br>";
                     }

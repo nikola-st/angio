@@ -11,6 +11,11 @@ class Role extends Model
 
     protected $fillable = ['name'];
 
+    public static function patientId(): int
+    {
+        return self::where('name', 'patient')->firstOrFail()->id;
+    }
+
     public function users()
     {
         return $this->hasMany(User::class);

@@ -56,14 +56,54 @@ class MojiPreglediTable extends Component
 
             foreach ($phpWord->getSections() as $section) {
                 foreach ($section->getElements() as $element) {
+
+                    // Paragrafi sa više Text elemenata
                     if ($element instanceof TextRun) {
+                        $paragraphText = '';
+
                         foreach ($element->getElements() as $child) {
                             if ($child instanceof Text) {
-                                $content .= htmlspecialchars($child->getText()) . '<br>';
+                                $paragraphText .= $child->getText();
+                            } elseif ($child instanceof TextBreak) {
+                                $paragraphText .= "\n"; // sačuvaj line break
                             }
                         }
-                    } elseif ($element instanceof Text) {
-                        $content .= htmlspecialchars($element->getText()) . '<br>';
+
+                        $paragraphText = trim($paragraphText, "\r\n ");
+
+                        // Dodaje alignment
+                        $alignment = 'left';
+                        $style = $element->getParagraphStyle();
+                        if ($style && method_exists($style, 'getAlignment')) {
+                            $alignVal = $style->getAlignment();
+                            if ($alignVal) {
+                                $alignment = strtolower($alignVal);
+                            }
+                        }
+
+                        // Uključi prazne paragrafe
+                        if ($paragraphText === '') {
+                            $content .= "<div style='height: 1em;'>&nbsp;</div>";
+                        } else {
+                            $content .= "<div style='text-align: {$alignment}; margin-bottom: 6px; white-space: pre-line;'>"
+                                . htmlspecialchars($paragraphText)
+                                . "</div>";
+                        }
+                    }
+                    // Uključi pojedinačne Text elemente
+                    elseif ($element instanceof Text) {
+                        $text = trim($element->getText());
+                        if ($text === '') {
+                            $content .= "<div style='height: 1em;'>&nbsp;</div>";
+                        } else {
+                            $content .= "<div style='text-align: left; margin-bottom: 6px; white-space: pre-line;'>"
+                                . htmlspecialchars($text)
+                                . "</div>";
+                        }
+                    }
+                    // Uključi line breakove
+                    elseif ($element instanceof TextBreak) {
+                        $content .= "<br>";
                     }
                 }
             }
@@ -110,7 +150,7 @@ class MojiPreglediTable extends Component
                     }
                 }
             }
-            
+
             // Logo i pečat sa CSS skaliranjem
             $logoPath = public_path('assets/img/logo12pdf.png');
             $pecatPath = public_path('assets/img/pecatpdf.png');
