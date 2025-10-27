@@ -30,9 +30,9 @@ document.addEventListener('DOMContentLoaded', () => {
         ['pacijentModal', 'updatePacijentModal', 'deletePacijentModal'].forEach(closeModalById);
     });
 
-    // Otvori Delete Modal (ako koristiš dispatch 'open-delete-modal')
+    // Otvori Delete Modal
     Livewire.on('open-delete-modal', () => {
-        closeModalById('deletePacijentModal'); // ili modal.show() ako želiš otvoriti
+        closeModalById('deletePacijentModal');
     });
 });
 </script>
