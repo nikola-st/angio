@@ -20,6 +20,9 @@
     @endif
 
     <div class="container mt-4">
+        @if (session()->has('message'))
+            <h5 class="alert alert-success">{{ session('message') }}</h5>
+        @endif
         <h4 class="mb-3">
             Dobrodošli, {{ auth()->user()->name }}!
         </h4>

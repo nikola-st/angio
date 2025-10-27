@@ -35,7 +35,7 @@ class MojiPreglediTable extends Component
         $pregled = Pregled::findOrFail($id);
 
         if ($pregled->idpacijenta !== Auth::user()->pacijent->idpacijenta) {
-            session()->flash('error', 'Nemate pristup ovom nalazu.');
+            session()->flash('message', 'Nemate pristup ovom nalazu.');
             $this->closeModal();
             return;
         }
@@ -45,7 +45,7 @@ class MojiPreglediTable extends Component
         $filePath = file_exists($filePathDocx) ? $filePathDocx : $filePathDoc;
 
         if (!file_exists($filePath)) {
-            session()->flash('error', 'Fajl ne postoji.');
+            session()->flash('message', 'Došlo je do greške, fajl ne postoji.');
             $this->closeModal();
             return;
         }
@@ -110,7 +110,7 @@ class MojiPreglediTable extends Component
 
             $this->content = $content;
         } catch (\Exception $e) {
-            session()->flash('error', 'Greška pri učitavanju Word fajla: ' . $e->getMessage());
+            session()->flash('message', 'Greška pri učitavanju Word fajla: ' . $e->getMessage());
             $this->closeModal();
         }
     }
@@ -120,7 +120,7 @@ class MojiPreglediTable extends Component
         $pregled = Pregled::findOrFail($id);
 
         if ($pregled->idpacijenta !== Auth::user()->pacijent->idpacijenta) {
-            session()->flash('error', 'Nemate pristup ovom nalazu.');
+            session()->flash('message', 'Nemate pristup ovom nalazu.');
             return;
         }
 
@@ -129,7 +129,7 @@ class MojiPreglediTable extends Component
         $filePath = file_exists($filePathDocx) ? $filePathDocx : $filePathDoc;
 
         if (!file_exists($filePath)) {
-            session()->flash('error', 'Fajl ne postoji.');
+            session()->flash('message', 'Fajl ne postoji.');
             return;
         }
 
@@ -181,7 +181,7 @@ class MojiPreglediTable extends Component
                 echo $dompdf->output();
             }, "{$imePrezime}.pdf");
         } catch (\Exception $e) {
-            session()->flash('error', 'Greška pri kreiranju PDF-a: ' . $e->getMessage());
+            session()->flash('message', 'Greška pri kreiranju PDF-a: ' . $e->getMessage());
             return;
         }
     }
