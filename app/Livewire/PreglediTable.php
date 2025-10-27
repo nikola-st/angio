@@ -50,7 +50,7 @@ class PreglediTable extends Component
         $this->nalaz = $this->nalaz ?? ''; // osiguraj da nije null
         $this->validate();
 
-        // Ako vrsta_pregleda nije 1, angioloski postavi na 0 ako je null
+        // Ako vrsta_pregleda nije 1 angioloski, postavi na 0
         if ($this->vrsta_pregleda != 1) {
             $this->angioloski = $this->angioloski ?? 0;
         }

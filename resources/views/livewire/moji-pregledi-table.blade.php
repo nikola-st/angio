@@ -20,7 +20,10 @@
     @endif
 
     <div class="container mt-4">
-        <h4 class="mb-3">Moji pregledi</h4>
+        <h4 class="mb-3">
+            Dobrodošli, {{ auth()->user()->name }}!
+        </h4>
+        <h5 class="mb-3">Moji pregledi</h5>
 
         @if ($pregledi->count())
             <table class="table table-striped table-bordered">
@@ -35,11 +38,11 @@
                         <tr>
                             <td>{{ \Carbon\Carbon::parse($p->datum)->format('d.m.Y') }}</td>
                             <td>
-                                <button wire:click="openModal({{ $p->idpregleda }})" class="btn btn-primary btn-sm">
-                                    Pogledaj izveštaj
-                                </button>
                                 <button wire:click="downloadPDF({{ $p->idpregleda }})" class="btn btn-warning btn-sm">
                                     Preuzmi izveštaj PDF
+                                </button>
+                                <button wire:click="openModal({{ $p->idpregleda }})" class="btn btn-primary btn-sm">
+                                    Pogledaj izveštaj
                                 </button>
                             </td>
                         </tr>
