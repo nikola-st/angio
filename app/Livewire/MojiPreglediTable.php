@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\Element\TextRun;
 use PhpOffice\PhpWord\Element\Text;
+use PhpOffice\PhpWord\Element\TextBreak;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
