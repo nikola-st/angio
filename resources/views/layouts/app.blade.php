@@ -31,6 +31,7 @@
         <livewire:date-time-display />
 
         <div class="d-flex align-items-center gap-2 ms-3">
+            <!-- Ulogovanim korisnicima prikaži dugme u odnosu na njihovu ulogu u sistemu -->
             @if(auth()->user()->isDoctor())
                 <a href="{{ route('doktor') }}" class="btn btn-primary btn-sm">Rad sa pacijentima</a>
             @elseif(auth()->user()->isPatient())
@@ -44,11 +45,10 @@
         </div>
     </nav>
 
-
     <!-- Main content -->
     <main class="container py-0 pb-5">
         @yield('content')
-        {{ $slot ?? '' }}
+        {{ $slot ?? '' }} <!-- Drugi način ubacivanja sadržaja Blade komponenti, zbog Livewire -->
     </main>
 
     @livewireScripts
