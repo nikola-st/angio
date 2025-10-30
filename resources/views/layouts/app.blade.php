@@ -53,12 +53,6 @@
 
     @livewireScripts
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        window.addEventListener('notify', event => {
-            // Bootstrap UI toast?
-            alert(event.detail.message || 'Poruka');
-        });
-    </script>
     @stack('scripts')
 </body>
 </html>
