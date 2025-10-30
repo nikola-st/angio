@@ -24,8 +24,9 @@ class Doctor extends Model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    public function pregledi()
-    {
-        return $this->hasMany(Pregled::class, 'doctor_id', 'id_doktora');
-    }
+    //public function pregledi()
+    //{
+        // Trenutno nema direktne veze, jer svi lekari imaju pristup svim pregledima
+        //return $this->hasMany(Pregled::class, 'doctor_id', 'id_doktora');
+    //}
 }
