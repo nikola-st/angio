@@ -3,12 +3,14 @@
 namespace App\Livewire;
 
 use App\Models\Pacijent;
+use App\Models\User;
+use App\Models\Role;
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\User;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
 use App\Notifications\SetPassword;
+
 
 class PacijentiTable extends Component
 {
