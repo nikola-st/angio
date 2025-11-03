@@ -47,7 +47,7 @@ class PreglediTable extends Component
 
     public function savePregled()
     {
-        $this->nalaz = $this->nalaz ?? ''; // osiguraj da nije null
+        $this->nalaz = $this->nalaz ?? ''; //Operator nultog spajanja, ako nalaz nije null, koristi nalaz. Ako je null, koristi prazan string
         $this->validate();
 
         // Ako vrsta_pregleda nije 1 angioloski, postavi na 0
@@ -86,7 +86,7 @@ class PreglediTable extends Component
         return redirect()->route('doktor');
     }
 
-    // Kreira Word (.docx) iz HTML sadržaja i čuva na disk/lokalno skladište.
+    // Kreira Word (.docx) iz HTML sadržaja i čuva u app lokalno.
     protected function createNalaz(string $nalazContent, $idpacijenta, $idpregleda): string
     {
         // preuzmi HTML sadržaj
@@ -98,7 +98,7 @@ class PreglediTable extends Component
         // Ukloni prazne <p>
         $html = preg_replace('/<p>\s*<\/p>/', '', $html);
 
-        // kloni sve script/style tagove
+        // Ukloni sve script/style tagove
         $html = preg_replace('#<(script|style).*?>.*?</\1>#si', '', $html);
 
         // konvertuj <div style="text-align:center"> u <p style="text-align:center">
@@ -231,7 +231,7 @@ class PreglediTable extends Component
             return;
         }
 
-        // Ekstraktujemo ekstenziju iz puta da bismo je iskoristili za download ime
+        // uzmi ekstenziju za ime fajla
         $ext = pathinfo($relativePath, PATHINFO_EXTENSION);
         $downloadName = "{$pregled->pacijent->imeprezime}.{$ext}";
 
