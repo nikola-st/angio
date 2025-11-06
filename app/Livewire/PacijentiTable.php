@@ -75,11 +75,15 @@ class PacijentiTable extends Component
 
             $token = Password::createToken($pacijent);
             $pacijent->notify(new SetPassword($token));
+
+            $emailSent = true;
         }
 
         $this->resetInput();
         $this->dispatch('close-modal');
-        session()->flash('message', 'Pacijent dodat uspešno!');
+
+        //pozivamo helper funkciju za prikaz flash poruke
+        $this->flashMessage($emailSent, 'dodat');
 
         return redirect()->route('pregledi', $pacijent->idpacijenta);
     }
@@ -120,11 +124,23 @@ class PacijentiTable extends Component
 
             $token = Password::createToken($pacijent);
             $pacijent->notify(new SetPassword($token));
+
+            $emailSent = true;
         }
 
         $this->resetInput();
         $this->dispatch('close-modal');
-        session()->flash('message', 'Pacijent uspešno ažuriran!');
+
+        $this->flashMessage($emailSent, 'ažuriran');
+    }
+
+    private function flashMessage(bool $emailSent, string $actionType): void
+    {
+        if ($emailSent) {
+            session()->flash('message', "Pacijent uspešno {$actionType} i registrovan u sistemu! Poslata mu je email poruka za podešavanje lozinke!");
+        } else {
+            session()->flash('message', "Pacijent uspešno {$actionType}!");
+        }
     }
 
     public function deletePacijent(int $idpacijenta)
