@@ -111,6 +111,9 @@ class PacijentiTable extends Component
         $pacijent = Pacijent::findOrFail($this->idpacijenta);
         $pacijent->update($validatedData);
 
+        // Uvek definiši promenljivu $emailSent pre uslovne naredbe (if)
+        $emailSent = false;
+
         if (!empty($pacijent->email) && !$pacijent->user_id) {
             $user = User::create([
                 'name' => $pacijent->imeprezime,
