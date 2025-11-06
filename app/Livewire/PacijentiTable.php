@@ -43,6 +43,8 @@ class PacijentiTable extends Component
         'imeprezime.required' => 'Ime i prezime su obavezni',
         'godina_rodjenja.required' => 'Godina rođenja je obavezna',
         'godina_rodjenja.integer' => 'Godina rođenja mora biti broj',
+        'godina_rodjenja.min' => 'Godina rođenja ne može biti manja od 1900.',
+        'godina_rodjenja.max' => 'Godina rođenja ne može biti veća od trenutne godine.',
         'adresa.required' => 'Adresa je obavezna',
         'telefon.required' => 'Broj telefona je obavezan',
         'telefon.string' => 'Broj telefona mora biti tekstualni string',
