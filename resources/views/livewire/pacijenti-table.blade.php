@@ -42,9 +42,8 @@
                                                 wire:click="editPacijent({{ $pacijent->idpacijenta }})"
                                                 wire:key="edit-{{ $pacijent->idpacijenta }}">Izmeni</button>
                                             <button type="button" class="btn btn-danger btn-sm"
-                                                data-bs-toggle="modal" data-bs-target="#deletePacijentModal"
-                                                wire:click="deletePacijent({{ $pacijent->idpacijenta }})"
-                                                wire:key="delete-{{ $pacijent->idpacijenta }}">Obriši</button>
+                                            wire:click="deletePacijent({{ $pacijent->idpacijenta }})"
+                                            wire:key="delete-{{ $pacijent->idpacijenta }}">Obriši</button>
                                         </td>
                                     </tr>
                                 @empty
@@ -150,7 +149,7 @@
     </div>
 
     <!-- Delete Pacijent Modal -->
-    <div wire:ignore.self class="modal fade" id="deletePacijentModal" wire:ignore.self tabindex="-1" aria-labelledby="deletePacijentModalLabel" aria-hidden="true">
+    <div class="modal fade" id="deletePacijentModal" tabindex="-1" wire:ignore>
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -169,5 +168,22 @@
             </div>
         </div>
     </div>
-
 </div>
+@push('scripts')
+<script>
+let deleteModal = null;
+
+document.addEventListener('livewire:navigated', () => {
+    const modalEl = document.getElementById('deletePacijentModal');
+    deleteModal = bootstrap.Modal.getOrCreateInstance(modalEl);
+});
+
+Livewire.on('open-delete-modal', () => {
+    deleteModal.show();
+});
+
+Livewire.on('close-modal', () => {
+    deleteModal.hide();
+});
+</script>
+@endpush
