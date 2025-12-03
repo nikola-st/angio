@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "662ba50c873f443e95a146aa46749538",
+    "content-hash": "d99847c240a80ec5728280af7da08c2a",
     "packages": [
         {
             "name": "barryvdh/laravel-dompdf",
@@ -2891,16 +2891,16 @@
         },
         {
             "name": "phiki/phiki",
-            "version": "v2.0.4",
+            "version": "v2.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phikiphp/phiki.git",
-                "reference": "160785c50c01077780ab217e5808f00ab8f05a13"
+                "reference": "36d03e4c103b825f2657db966730d43e2035ff00"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phikiphp/phiki/zipball/160785c50c01077780ab217e5808f00ab8f05a13",
-                "reference": "160785c50c01077780ab217e5808f00ab8f05a13",
+                "url": "https://api.github.com/repos/phikiphp/phiki/zipball/36d03e4c103b825f2657db966730d43e2035ff00",
+                "reference": "36d03e4c103b825f2657db966730d43e2035ff00",
                 "shasum": ""
             },
             "require": {
@@ -2946,7 +2946,7 @@
             "description": "Syntax highlighting using TextMate grammars in PHP.",
             "support": {
                 "issues": "https://github.com/phikiphp/phiki/issues",
-                "source": "https://github.com/phikiphp/phiki/tree/v2.0.4"
+                "source": "https://github.com/phikiphp/phiki/tree/v2.0.5"
             },
             "funding": [
                 {
@@ -2958,7 +2958,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2025-09-20T17:21:02+00:00"
+            "time": "2025-11-04T20:03:45+00:00"
         },
         {
             "name": "phpoffice/math",
@@ -10136,12 +10136,12 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "^8.2"
     },
-    "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "platform-dev": [],
+    "plugin-api-version": "2.3.0"
 }

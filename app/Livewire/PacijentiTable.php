@@ -59,6 +59,7 @@ class PacijentiTable extends Component
     public function savePacijent()
     {
         $validatedData = $this->validate();
+        $emailSent = false;
 
         $pacijent = Pacijent::create($validatedData);
 

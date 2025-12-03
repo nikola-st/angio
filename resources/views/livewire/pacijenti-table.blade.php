@@ -150,7 +150,7 @@
     </div>
 
     <!-- Delete Pacijent Modal -->
-    <div wire:ignore.self class="modal fade" id="deletePacijentModal" tabindex="-1" aria-labelledby="deletePacijentModalLabel" aria-hidden="true">
+    <div wire:ignore.self class="modal fade" id="deletePacijentModal" wire:ignore.self tabindex="-1" aria-labelledby="deletePacijentModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
