@@ -55,7 +55,6 @@ Route::middleware('auth')->group(function () {
     // Pacijent dashboard
     Route::get('/moji-pregledi/', [DashboardController::class, 'mojiPregledi'])
         ->name('moji-pregledi')
-
         ->middleware(PatientMiddleware::class);
 });
 
